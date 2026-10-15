@@ -1,0 +1,50 @@
+{
+  "name": "api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "prisma generate",
+    "start": "node src/index.ts",
+    "test": "tsx tests/integration.test.ts",
+    "postinstall": "prisma skills sync || exit 0"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "dependencies": {
+    "@clerk/express": "^2.1.78",
+    "cors": "^2.8.6",
+    "dotenv": "^18.0.6",
+    "express": "^5.2.1",
+    "helmet": "^8.3.0",
+    "pdfkit": "^0.20.2",
+    "resend": "^6.32.1",
+    "socket.io": "^4.8.4",
+    "stripe": "^23.0.0",
+    "svix": "^2.8.0",
+    "zod": "^4.6.5"
+  },
+  "devDependencies": {
+    "@prisma/client": "5.13.0",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
+    "@types/node": "^26.6.4",
+    "@types/pdfkit": "^0.17.6",
+    "prisma": "5.13.0",
+    "socket.io-client": "^4.8.4",
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "@prisma/client",
+      "@prisma/engines",
+      "esbuild",
+      "prisma",
+      "unrs-resolver"
+    ]
+  }
+}

@@ -1,0 +1,49 @@
+name: CI Quality Gate
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+jobs:
+  quality-gate:
+    name: Install, Typecheck, Lint & Integration Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 9
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Generate Prisma Client
+        run: pnpm --filter api exec prisma generate
+
+      - name: Push Prisma SQLite Schema for Testing
+        run: pnpm --filter api exec prisma db push
+
+      - name: Run Typechecks
+        run: |
+          pnpm --filter shared exec tsc --noEmit
+          pnpm --filter api exec tsc --noEmit
+          pnpm --filter web exec tsc --noEmit
+
+      - name: Run API Integration Tests
+        run: pnpm --filter api test
+        env:
+          DATABASE_URL: "file:./dev.db"
+          CLERK_SECRET_KEY: "sk_test_mock_for_ci"
+          PORT: "4000"
+          NODE_ENV: "test"

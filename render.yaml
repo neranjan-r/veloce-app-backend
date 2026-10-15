@@ -1,0 +1,34 @@
+services:
+  - type: web
+    name: veloce-api
+    env: node
+    plan: starter
+    rootDir: .
+    buildCommand: pnpm install --frozen-lockfile && pnpm --filter api exec prisma generate && pnpm --filter api exec prisma migrate deploy
+    startCommand: pnpm --filter api run start
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: DATABASE_URL
+        sync: false
+      - key: DIRECT_URL
+        sync: false
+      - key: CLERK_SECRET_KEY
+        sync: false
+      - key: CLERK_PUBLISHABLE_KEY
+        sync: false
+      - key: CORS_ORIGIN
+        sync: false
+      - key: STRIPE_SECRET_KEY
+        sync: false
+      - key: STRIPE_WEBHOOK_SECRET
+        sync: false
+      - key: RESEND_API_KEY
+        sync: false
+      - key: RESEND_FROM
+        value: receipts@veloce.app
+      - key: TRACKING_SECRET
+        generateValue: true

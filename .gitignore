@@ -1,0 +1,40 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Environment variables
+.env*
+!.env.example
+
+# Build / Output
+dist/
+build/
+coverage/
+*.tsbuildinfo
+
+# SQLite databases & temp files
+*.db
+*.db-journal
+dev.db
+*.sqlite
+*.sqlite3
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Sensitive test/proof tokens
+proof_data.json
+
+# IDE / Tooling / Agents
+.DS_Store
+Thumbs.db
+.agents/
+.cursor/
+.claude/
+.devin/

@@ -1,0 +1,192 @@
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum Role {
+  RIDER
+  DRIVER
+  ADMIN
+}
+
+enum VehicleType {
+  VELOCE_X     @map("Veloce X")
+  VELOCE_BLACK @map("Veloce Black")
+  VELOCE_GRAND @map("Veloce Grand")
+}
+
+enum RideStatus {
+  REQUESTED
+  ACCEPTED
+  ARRIVED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+enum PaymentStatus {
+  PENDING
+  SUCCEEDED
+  FAILED
+}
+
+enum TicketStatus {
+  OPEN
+  RESOLVED
+  CLOSED
+}
+
+model User {
+  id                    String         @id @default(cuid())
+  clerkId               String         @unique
+  role                  Role           @default(RIDER)
+  name                  String?
+  email                 String?
+  phone                 String?
+  avatarUrl             String?
+  stripeCustomerId      String?
+  emergencyContactName  String?
+  emergencyContactPhone String?
+  createdAt             DateTime       @default(now())
+  updatedAt             DateTime       @updatedAt
+  driverProfile         DriverProfile?
+}
+
+model DriverProfile {
+  id                String      @id @default(cuid())
+  userId            String      @unique
+  user              User        @relation(fields: [userId], references: [id])
+  vehicleType       VehicleType @default(VELOCE_X)
+  vehicleModel      String?
+  plateNumber       String?
+  isOnline          Boolean     @default(false)
+  lat               Float?
+  lng               Float?
+  locationUpdatedAt DateTime?
+  avgRating         Float?
+  ratingCount       Int         @default(0)
+  stripeAccountId   String?
+  payoutsEnabled    Boolean     @default(false)
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+
+  @@index([isOnline])
+}
+
+model Ride {
+  id                   String       @id @default(cuid())
+  riderId              String
+  driverId             String?
+  status               RideStatus   @default(REQUESTED)
+  vehicleType          VehicleType  @default(VELOCE_X)
+  pickupLat            Float
+  pickupLng            Float
+  pickupAddress        String
+  dropLat              Float
+  dropLng              Float
+  dropAddress          String
+  distanceMeters       Int
+  durationSeconds      Int
+  fareEstimatePaise    Int
+  fareFinalPaise       Int?
+  promoCodeId          String?
+  discountPaise        Int?
+  surgeMultiplier      Float        @default(1.0)
+  cancelledBy          String?
+  cancellationFeePaise Int?
+  requestedAt          DateTime     @default(now())
+  acceptedAt           DateTime?
+  startedAt            DateTime?
+  completedAt          DateTime?
+  createdAt            DateTime     @default(now())
+  updatedAt            DateTime     @updatedAt
+
+  rideStops            RideStop[]
+  payment              Payment?
+  rating               Rating?
+
+  @@index([status, riderId, driverId])
+  @@index([status])
+  @@index([riderId])
+  @@index([driverId])
+}
+
+model RideStop {
+  id       String @id @default(cuid())
+  rideId   String
+  ride     Ride   @relation(fields: [rideId], references: [id])
+  position Int
+  lat      Float
+  lng      Float
+  address  String
+}
+
+model Payment {
+  id                    String        @id @default(cuid())
+  rideId                String        @unique
+  ride                  Ride          @relation(fields: [rideId], references: [id])
+  stripePaymentIntentId String?
+  amountPaise           Int
+  status                PaymentStatus @default(PENDING)
+  driverPayoutPaise     Int?
+  platformFeePaise      Int?
+  createdAt             DateTime      @default(now())
+  updatedAt             DateTime      @updatedAt
+
+  @@index([rideId])
+}
+
+model Rating {
+  id        String   @id @default(cuid())
+  rideId    String   @unique
+  ride      Ride     @relation(fields: [rideId], references: [id])
+  riderId   String
+  driverId  String
+  stars     Int
+  comment   String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model PromoCode {
+  id           String    @id @default(cuid())
+  code         String    @unique
+  percentOff   Int?
+  flatOffPaise Int?
+  maxUses      Int       @default(1)
+  usedCount    Int       @default(0)
+  expiresAt    DateTime?
+  active       Boolean   @default(true)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+}
+
+model SupportTicket {
+  id         String       @id @default(cuid())
+  userId     String
+  rideId     String?
+  category   String
+  message    String
+  status     TicketStatus @default(OPEN)
+  adminReply String?
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+
+  @@index([status])
+}
+
+model SosEvent {
+  id        String   @id @default(cuid())
+  rideId    String
+  userId    String
+  lat       Float
+  lng       Float
+  resolved  Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

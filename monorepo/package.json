@@ -1,0 +1,28 @@
+{
+  "name": "veloce",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "pnpm --parallel --filter web --filter api run dev",
+    "dev:frontend": "pnpm --filter web run dev",
+    "dev:backend": "pnpm --filter api run dev",
+    "build:frontend": "pnpm --filter web run build",
+    "build:backend": "pnpm --filter api exec prisma generate",
+    "test:backend": "pnpm --filter api test",
+    "test": "pnpm --filter api test",
+    "typecheck": "pnpm --filter api exec tsc --noEmit && pnpm --filter web exec tsc --noEmit"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devEngines": {
+    "packageManager": {
+      "name": "pnpm",
+      "version": "12.10.1",
+      "onFail": "download"
+    }
+  },
+  "packageManager": "pnpm@12.10.1",
+  "type": "module"
+}
