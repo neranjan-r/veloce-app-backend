@@ -2,6 +2,8 @@
 
 Veloce is a full-stack, enterprise-grade ride-hailing and private mobility platform built with Next.js 15, Node.js/Express, Socket.io, Prisma ORM, Clerk Authentication, and Stripe Payments.
 
+> 🎙️ **Project Presentation & Demo Speech:** For an end-to-end presentation and video walkthrough script tailored to this project, see [docs/PRESENTATION_SPEECH.md](docs/PRESENTATION_SPEECH.md).
+
 ---
 
 ## 1. Feature Map (13 Core Use Cases)
